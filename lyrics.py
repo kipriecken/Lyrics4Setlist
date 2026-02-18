@@ -3,6 +3,7 @@ import os
 import csv
 from fpdf import FPDF
 from dotenv import load_dotenv
+from rapidfuzz import fuzz
 
 load_dotenv()
 
@@ -57,6 +58,8 @@ pdf.set_auto_page_break(auto=True, margin=15)
 
 for song in songs:
     data = genius.search_song(song["title"], song["artist"])
+    if data and fuzz.ratio(song["title"].lower(), data.title.lower()) < 80 or data and data.artist and fuzz.ratio(song["artist"].lower(), data.artist.lower()) < 80:
+        print(f"Warning: The fetched song '{data.title}' by '{data.artist}' does not closely match the requested song '{song['title']}' by '{song['artist']}'.")
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     if data:
