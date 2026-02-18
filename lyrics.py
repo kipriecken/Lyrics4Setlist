@@ -4,6 +4,7 @@ import csv
 from fpdf import FPDF
 from dotenv import load_dotenv
 from rapidfuzz import fuzz
+from langdetect import detect
 
 load_dotenv()
 
@@ -49,6 +50,25 @@ def convert_csv_to_songs(csv_file):
         print(f"Skipping row due to missing data: {row}") 
   return songs
 
+def detect_language(text):
+    """Detects the language of the given text.
+    
+    Args:
+        text: The text to detect the language of.
+
+    Returns:
+        The detected language code (ex. "en" for English), or None if detection fails.
+
+    """
+    try:
+        return detect(text)
+    except ImportError:
+        print("langdetect library not found. Please install it to enable language detection.")
+        return None
+    except Exception as e:
+        print(f"Error detecting language: {e}")
+        return None
+
 csv_file = "sample-data.csv"
 csv_file = get_csv_from_input() or csv_file
 songs = convert_csv_to_songs(csv_file)
@@ -64,6 +84,10 @@ for song in songs:
     pdf.set_font("Arial", size=12)
     if data:
         pdf.multi_cell(0, 10, f"{song['title']} by {song['artist']}\n\n")
+        print(f"Detecting language for {song['title']} by {song['artist']}...")
+        language = detect_language(data.lyrics)
+        if language:
+            print(f"Detected language: {language}")
         pdf.multi_cell(0, 10, data.lyrics.encode("latin-1", "replace").decode("latin-1"))
     else:
         pdf.multi_cell(0, 10, f"Lyrics not found for {song['title']} by {song['artist']}.")
