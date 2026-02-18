@@ -2,9 +2,22 @@ import lyricsgenius
 import os
 import csv
 from fpdf import FPDF
+from dotenv import load_dotenv
+
+load_dotenv()
+
+debug = os.getenv("DEBUG", "False").lower() == "true"
+lyrics_genius_key = os.getenv("GENIUS_ACCESS_TOKEN")
+if not lyrics_genius_key:
+    print("Warning: GENIUS_ACCESS_TOKEN not found in environment variables. Please set it to use the lyrics fetching functionality.")
+genius = lyricsgenius.Genius(lyrics_genius_key)
 
 def get_csv_from_input():
-  """Gets the CSV data from the user via input."""
+  """Gets the CSV data from the user via input.
+  
+  Returns:
+    The path to the CSV file provided by the user, or None if there was an error processing the input.
+  """
   try:
     csv_data = input("Provide a path to a CSV file (hit Enter to generate using sample data): ")
     return csv_data
@@ -38,9 +51,6 @@ def convert_csv_to_songs(csv_file):
 csv_file = "sample-data.csv"
 csv_file = get_csv_from_input() or csv_file
 songs = convert_csv_to_songs(csv_file)
-
-lyrics_genius_key = os.environ.get("LYRICS_GENIUS_KEY")
-genius = lyricsgenius.Genius(lyrics_genius_key)
 
 pdf = FPDF()
 pdf.set_auto_page_break(auto=True, margin=15)
