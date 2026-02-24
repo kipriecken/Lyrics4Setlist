@@ -169,54 +169,61 @@ def translate_lyrics(lyrics: str, src_language: str) -> str:
         return lyrics
 
 
-for song in songs:
-    data = search_song(song["title"], song["artist"])
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    if data:
-        title, artist, lyrics = (
-            data.get("title"),
-            data.get("artist"),
-            data.get("lyrics"),
-        )
-        pdf.multi_cell(0, 10, f"{title} by {artist}\n\n")
-        print(f"Detecting language for {title} by {artist}...")
-        language = detect_language(lyrics)
-        translated_lyrics = None
-        if language:
-            print(f"Detected language: {language}")
-        if language and language != "en":
-            print(
-                f"Warning: Detected language '{language}' for {title} by {artist} may not be supported by the PDF encoding. Lyrics may not display correctly."
+def main():
+    for song in songs:
+        data = search_song(song["title"], song["artist"])
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+        if data:
+            title, artist, lyrics = (
+                data.get("title"),
+                data.get("artist"),
+                data.get("lyrics"),
             )
-            try:
-                translated_lyrics = translate_lyrics(lyrics, language)
+            pdf.multi_cell(0, 10, f"{title} by {artist}\n\n")
+            print(f"Detecting language for {title} by {artist}...")
+            language = detect_language(lyrics)
+            translated_lyrics = None
+            if language:
+                print(f"Detected language: {language}")
+            if language and language != "en":
                 print(
-                    f"Translated lyrics for {title} by {artist}:\n{translated_lyrics}"
+                    f"Warning: Detected language '{language}' for {title} by {artist} may not be supported by the PDF encoding. Lyrics may not display correctly."
                 )
-            except Exception as e:
-                print(f"Error translating lyrics for {title} by {artist}: {e}")
-                print("Adding original lyrics to PDF with potential encoding issues.")
-        pdf.multi_cell(0, 10, lyrics.encode("latin-1", "replace").decode("latin-1"))
-        if translated_lyrics:
-            print(f"Adding translated lyrics for {title} by {artist} to PDF...")
+                try:
+                    translated_lyrics = translate_lyrics(lyrics, language)
+                    print(
+                        f"Translated lyrics for {title} by {artist}:\n{translated_lyrics}"
+                    )
+                except Exception as e:
+                    print(f"Error translating lyrics for {title} by {artist}: {e}")
+                    print(
+                        "Adding original lyrics to PDF with potential encoding issues."
+                    )
+            pdf.multi_cell(0, 10, lyrics.encode("latin-1", "replace").decode("latin-1"))
+            if translated_lyrics:
+                print(f"Adding translated lyrics for {title} by {artist} to PDF...")
+                pdf.multi_cell(
+                    0,
+                    10,
+                    f"\nTranslated Lyrics:\n{translated_lyrics.encode('latin-1', 'replace').decode('latin-1')}",
+                )
+        else:
             pdf.multi_cell(
                 0,
                 10,
-                f"\nTranslated Lyrics:\n{translated_lyrics.encode('latin-1', 'replace').decode('latin-1')}",
+                f"Lyrics not found for {song.get('title', 'Unknown Title')} by {song.get('artist', 'Unknown Artist')}.",
             )
-    else:
-        pdf.multi_cell(
-            0,
-            10,
-            f"Lyrics not found for {song.get('title', 'Unknown Title')} by {song.get('artist', 'Unknown Artist')}.",
-        )
-    print(data.get("lyrics", "No lyrics found") if data else "No data found")
+        print(data.get("lyrics", "No lyrics found") if data else "No data found")
 
-pdf_name = "lyrics.pdf"
-pdf_name.encode("latin-1", "replace")
-try:
-    pdf.output(pdf_name).encode("latin-1")
-    print(f"PDF generated successfully: {pdf_name}")
-except Exception as e:
-    print(f"Error generating PDF: {e}")
+    pdf_name = "lyrics.pdf"
+    pdf_name.encode("latin-1", "replace")
+    try:
+        pdf.output(pdf_name).encode("latin-1")
+        print(f"PDF generated successfully: {pdf_name}")
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+
+
+if __name__ == "__main__":
+    main()
