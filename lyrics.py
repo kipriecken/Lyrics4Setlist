@@ -1,14 +1,14 @@
 import asyncio
-import os
 import csv
-from typing import List, Dict
+import os
+from typing import Dict, List, Optional
 
 import lyricsgenius
-from fpdf import FPDF
 from dotenv import load_dotenv
-from rapidfuzz import fuzz
-from langdetect import detect
+from fpdf import FPDF
 from googletrans import Translator
+from langdetect import detect
+from rapidfuzz import fuzz
 
 load_dotenv()
 
@@ -95,6 +95,59 @@ pdf = FPDF()
 pdf.set_auto_page_break(auto=True, margin=15)
 
 
+def is_match(requested, actual, threshold=80) -> bool:
+    """Determines if the requested and actual strings are a close match based on a similarity threshold.
+
+    Args:
+        requested: The requested string (e.g. song title or artist).
+        actual: The actual string fetched from Genius.
+        threshold: The similarity ratio threshold (0-100) for considering it a match.
+    Returns:
+        True if the similarity ratio is above the threshold, False otherwise.
+    """
+    if not requested or not actual:
+        return False
+    ratio = fuzz.ratio(requested.lower(), actual.lower())
+    return ratio >= threshold
+
+
+def search_song(title: str, artist: str) -> Optional[Dict[str, str]]:
+    """Searches for a song on Genius by title and artist.
+
+    Args:
+        title: The title of the song to search for.
+        artist: The artist of the song to search for.
+
+    Returns:
+        A Genius Song object if found, or None if not found or if Genius is not initialized.
+    """
+    if genius is None:
+        print("Genius client not initialized. Cannot search for songs.")
+        return None
+    try:
+        result = genius.search_song(title, artist)
+        if not result:
+            print(f"Song '{title}' by '{artist}' not found on Genius.")
+            return None
+
+        title_match = is_match(title, result.title)
+        artist_match = is_match(artist, result.artist)
+        if not title_match or not artist_match:
+            print(
+                f"Warning: The fetched song '{result.title}' by '{result.artist}' does not closely match the requested song '{title}' by '{artist}'."
+            )
+        else:
+            print(f"Found song '{result.title}' by '{result.artist}' on Genius.")
+        return {
+            "title": result.title,
+            "artist": result.artist,
+            "lyrics": result.lyrics,
+        }
+    except Exception as e:
+        print(f"Error searching for song '{title}' by '{artist}': {e}")
+        return None
+
+
 async def async_translate_lyrics(lyrics, src_language):
     """Translates the given lyrics to English using Google Translate.
 
@@ -114,49 +167,38 @@ async def async_translate_lyrics(lyrics, src_language):
 
 
 for song in songs:
-    data = genius.search_song(song["title"], song["artist"])
-    if (
-        data
-        and fuzz.ratio(song["title"].lower(), data.title.lower()) < 80
-        or data
-        and data.artist
-        and fuzz.ratio(song["artist"].lower(), data.artist.lower()) < 80
-    ):
-        print(
-            f"Warning: The fetched song '{data.title}' by '{data.artist}' does not closely match the requested song '{song['title']}' by '{song['artist']}'."
-        )
+    data = search_song(song["title"], song["artist"])
     pdf.add_page()
     pdf.set_font("Arial", size=12)
     if data:
-        pdf.multi_cell(0, 10, f"{song['title']} by {song['artist']}\n\n")
-        print(f"Detecting language for {song['title']} by {song['artist']}...")
-        language = detect_language(data.lyrics)
+        title, artist, lyrics = (
+            data.get("title"),
+            data.get("artist"),
+            data.get("lyrics"),
+        )
+        pdf.multi_cell(0, 10, f"{title} by {artist}\n\n")
+        print(f"Detecting language for {title} by {artist}...")
+        language = detect_language(lyrics)
         translated_lyrics = None
         if language:
             print(f"Detected language: {language}")
         if language and language != "en":
             print(
-                f"Warning: Detected language '{language}' for {song['title']} by {song['artist']} may not be supported by the PDF encoding. Lyrics may not display correctly."
+                f"Warning: Detected language '{language}' for {title} by {artist} may not be supported by the PDF encoding. Lyrics may not display correctly."
             )
             try:
                 translated_lyrics = str(
-                    asyncio.run(async_translate_lyrics(data.lyrics, language))
+                    asyncio.run(async_translate_lyrics(lyrics, language))
                 )
                 print(
-                    f"Translated lyrics for {song['title']} by {song['artist']}:\n{translated_lyrics}"
+                    f"Translated lyrics for {title} by {artist}:\n{translated_lyrics}"
                 )
             except Exception as e:
-                print(
-                    f"Error translating lyrics for {song['title']} by {song['artist']}: {e}"
-                )
+                print(f"Error translating lyrics for {title} by {artist}: {e}")
                 print("Adding original lyrics to PDF with potential encoding issues.")
-        pdf.multi_cell(
-            0, 10, data.lyrics.encode("latin-1", "replace").decode("latin-1")
-        )
+        pdf.multi_cell(0, 10, lyrics.encode("latin-1", "replace").decode("latin-1"))
         if translated_lyrics:
-            print(
-                f"Adding translated lyrics for {song['title']} by {song['artist']} to PDF..."
-            )
+            print(f"Adding translated lyrics for {title} by {artist} to PDF...")
             pdf.multi_cell(
                 0,
                 10,
@@ -164,7 +206,9 @@ for song in songs:
             )
     else:
         pdf.multi_cell(
-            0, 10, f"Lyrics not found for {song['title']} by {song['artist']}."
+            0,
+            10,
+            f"Lyrics not found for {song.get('title', 'Unknown Title')} by {song.get('artist', 'Unknown Artist')}.",
         )
     print(data)
 
