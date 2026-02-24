@@ -1,6 +1,7 @@
 import asyncio
 import os
 import csv
+from typing import List, Dict
 
 import lyricsgenius
 from fpdf import FPDF
@@ -37,32 +38,31 @@ def get_csv_path() -> str:
     return csv_path or "sample-data-2.csv"
 
 
-def convert_csv_to_songs(csv_file):
+def read_songs_from_csv(csv_path: str) -> List[Dict[str, str]]:
     """
-    Converts a CSV file to a list of song dictionaries.
+    Reads songs from a CSV file and returns a list of song dictionaries.
 
     Args:
-      csv_file: The path to the CSV file.
+      csv_path: The path to the CSV file.
 
     Returns:
-      A list of song dictionaries.
+      A list of song dictionaries, where each dictionary contains 'title' and 'artist' keys.
     """
     songs = []
+    if not os.path.exists(csv_path):
+        print(f"Error: File '{csv_path}' not found.")
+        return songs
     try:
-        with open(csv_file, "r") as file:
+        with open(csv_path, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
             next(reader, None)  # Skip the header row
             for row in reader:
-                try:
-                    title = row[0]
-                    artist = row[1]
-                    songs.append({"title": title, "artist": artist})
-                except IndexError:
+                if len(row) < 2 or not row[0].strip() or not row[1].strip():
                     print(f"Skipping row due to missing data: {row}")
-    except FileNotFoundError:
-        print(f"Error: File '{csv_file}' not found.")
+                    continue
+                songs.append({"title": row[0].strip(), "artist": row[1].strip()})
     except Exception as e:
-        print(f"Error reading CSV file '{csv_file}': {e}")
+        print(f"Error reading CSV file '{csv_path}': {e}")
     return songs
 
 
@@ -89,7 +89,7 @@ def detect_language(text):
 
 
 csv_file = get_csv_path()
-songs = convert_csv_to_songs(csv_file)
+songs = read_songs_from_csv(csv_file)
 
 pdf = FPDF()
 pdf.set_auto_page_break(auto=True, margin=15)
