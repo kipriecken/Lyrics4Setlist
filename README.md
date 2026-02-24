@@ -17,5 +17,8 @@ export GENIUS_ACCESS_TOKEN="aslkfj34o1u2-309834234okj"
 To run:
 
 ```
+python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+```
+```
 python3 lyrics.py
 ```
