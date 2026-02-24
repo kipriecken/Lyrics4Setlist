@@ -23,8 +23,6 @@ else:
     genius = lyricsgenius.Genius(LYRICS_GENIUS_KEY, timeout=15, retries=3, sleep_time=1)
     genius.verbose = DEBUG
 
-translator = Translator()
-
 
 def get_csv_path() -> str:
     """Gets the CSV data from the user via input.
@@ -148,7 +146,7 @@ def search_song(title: str, artist: str) -> Optional[Dict[str, str]]:
         return None
 
 
-async def async_translate_lyrics(lyrics, src_language):
+def translate_lyrics(lyrics, src_language):
     """Translates the given lyrics to English using Google Translate.
 
     Args:
@@ -159,8 +157,13 @@ async def async_translate_lyrics(lyrics, src_language):
         The translated lyrics in English, or the original lyrics if translation fails.
     """
     try:
-        translated = await translator.translate(lyrics, src=src_language, dest="en")
-        return translated
+
+        async def translate_async():
+            translator = Translator()
+            translated = await translator.translate(lyrics, src=src_language, dest="en")
+            return translated.text
+
+        return asyncio.run(translate_async())
     except Exception as e:
         print(f"Error translating lyrics: {e}")
         return lyrics
@@ -187,9 +190,7 @@ for song in songs:
                 f"Warning: Detected language '{language}' for {title} by {artist} may not be supported by the PDF encoding. Lyrics may not display correctly."
             )
             try:
-                translated_lyrics = str(
-                    asyncio.run(async_translate_lyrics(lyrics, language))
-                )
+                translated_lyrics = translate_lyrics(lyrics, language)
                 print(
                     f"Translated lyrics for {title} by {artist}:\n{translated_lyrics}"
                 )
