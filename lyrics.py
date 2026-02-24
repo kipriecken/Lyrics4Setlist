@@ -11,13 +11,16 @@ from googletrans import Translator
 
 load_dotenv()
 
-debug = os.getenv("DEBUG", "False").lower() == "true"
-lyrics_genius_key = os.getenv("GENIUS_ACCESS_TOKEN")
-if not lyrics_genius_key:
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+LYRICS_GENIUS_KEY = os.getenv("GENIUS_ACCESS_TOKEN")
+if not LYRICS_GENIUS_KEY:
     print(
         "Warning: GENIUS_ACCESS_TOKEN not found in environment variables. Please set it to use the lyrics fetching functionality."
     )
-genius = lyricsgenius.Genius(lyrics_genius_key)
+    genius = None
+else:
+    genius = lyricsgenius.Genius(LYRICS_GENIUS_KEY, timeout=15, retries=3, sleep_time=1)
+    genius.verbose = DEBUG
 
 translator = Translator()
 
