@@ -25,20 +25,16 @@ else:
 translator = Translator()
 
 
-def get_csv_from_input():
+def get_csv_path() -> str:
     """Gets the CSV data from the user via input.
 
     Returns:
       The path to the CSV file provided by the user, or None if there was an error processing the input.
     """
-    try:
-        csv_data = input(
-            "Provide a path to a CSV file (hit Enter to generate using sample data): "
-        )
-        return csv_data
-    except Exception as e:
-        print(f"Error processing input: {e}")
-        return None
+    csv_path = input(
+        "Provide a path to a CSV file (hit Enter to generate using sample data): "
+    )
+    return csv_path or "sample-data-2.csv"
 
 
 def convert_csv_to_songs(csv_file):
@@ -92,8 +88,7 @@ def detect_language(text):
         return None
 
 
-csv_file = "sample-data-2.csv"
-csv_file = get_csv_from_input() or csv_file
+csv_file = get_csv_path()
 songs = convert_csv_to_songs(csv_file)
 
 pdf = FPDF()
