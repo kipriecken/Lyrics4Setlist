@@ -64,7 +64,7 @@ def read_songs_from_csv(csv_path: str) -> List[Dict[str, str]]:
     return songs
 
 
-def detect_language(text):
+def detect_language(text: str) -> Optional[str]:
     """Detects the language of the given text.
 
     Args:
@@ -93,7 +93,7 @@ pdf = FPDF()
 pdf.set_auto_page_break(auto=True, margin=15)
 
 
-def is_match(requested, actual, threshold=80) -> bool:
+def is_match(requested: str, actual: str, threshold=80) -> bool:
     """Determines if the requested and actual strings are a close match based on a similarity threshold.
 
     Args:
@@ -146,7 +146,7 @@ def search_song(title: str, artist: str) -> Optional[Dict[str, str]]:
         return None
 
 
-def translate_lyrics(lyrics, src_language):
+def translate_lyrics(lyrics: str, src_language: str) -> str:
     """Translates the given lyrics to English using Google Translate.
 
     Args:
@@ -211,7 +211,7 @@ for song in songs:
             10,
             f"Lyrics not found for {song.get('title', 'Unknown Title')} by {song.get('artist', 'Unknown Artist')}.",
         )
-    print(data)
+    print(data.get("lyrics", "No lyrics found") if data else "No data found")
 
 pdf_name = "lyrics.pdf"
 pdf_name.encode("latin-1", "replace")
