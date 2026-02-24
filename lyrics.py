@@ -86,13 +86,6 @@ def detect_language(text: str) -> Optional[str]:
         return None
 
 
-csv_file = get_csv_path()
-songs = read_songs_from_csv(csv_file)
-
-pdf = FPDF()
-pdf.set_auto_page_break(auto=True, margin=15)
-
-
 def is_match(requested: str, actual: str, threshold=80) -> bool:
     """Determines if the requested and actual strings are a close match based on a similarity threshold.
 
@@ -169,18 +162,74 @@ def translate_lyrics(lyrics: str, src_language: str) -> str:
         return lyrics
 
 
+def generate_pdf(
+    songs_data: List[Dict[str, str]], pdf_name: str = "lyrics.pdf"
+) -> None:
+    """Generates a PDF file with the song lyrics.
+
+    Args:
+        songs_data: A list of dictionaries containing song data (title, artist, lyrics, translated_lyrics).
+        pdf_name: The name of the PDF file to generate.
+    """
+
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    for song in songs_data:
+        title = song.get("title", "Unknown Title")
+        artist = song.get("artist", "Unknown Artist")
+        lyrics = song.get("lyrics", "No lyrics found")
+        translated_lyrics = song.get("translated_lyrics")
+
+        if lyrics == "No lyrics found":
+            pdf.multi_cell(
+                0,
+                10,
+                f"Lyrics not found for {title} by {artist}.",
+            )
+            continue
+        pdf.set_font("Arial", "B", size=14)
+        pdf.cell(0, 10, f"{title} by {artist}", ln=True)
+        pdf.set_font("Arial", size=12)
+        pdf.multi_cell(0, 10, lyrics.encode("latin-1", "replace").decode("latin-1"))
+
+        if translated_lyrics:
+            pdf.set_font("Arial", "I", size=12)
+            pdf.cell(0, 10, "Translated Lyrics:", ln=True)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(
+                0, 10, translated_lyrics.encode("latin-1", "replace").decode("latin-1")
+            )
+
+        pdf.ln(10)  # Add some space between songs
+
+    try:
+        pdf.output(pdf_name)
+        print(f"PDF generated successfully: {pdf_name}")
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+
+
 def main():
+    # handle CSV input
+    csv_path = get_csv_path()
+    songs = read_songs_from_csv(csv_path)
+    if not songs:
+        print("No valid songs found in the CSV file. Exiting.")
+        return
+
+    # fetch lyrics, detect language, translate if needed, and prepare data for PDF generation
+    songs_data = []
     for song in songs:
         data = search_song(song["title"], song["artist"])
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
         if data:
             title, artist, lyrics = (
                 data.get("title"),
                 data.get("artist"),
                 data.get("lyrics"),
             )
-            pdf.multi_cell(0, 10, f"{title} by {artist}\n\n")
             print(f"Detecting language for {title} by {artist}...")
             language = detect_language(lyrics)
             translated_lyrics = None
@@ -200,29 +249,18 @@ def main():
                     print(
                         "Adding original lyrics to PDF with potential encoding issues."
                     )
-            pdf.multi_cell(0, 10, lyrics.encode("latin-1", "replace").decode("latin-1"))
-            if translated_lyrics:
-                print(f"Adding translated lyrics for {title} by {artist} to PDF...")
-                pdf.multi_cell(
-                    0,
-                    10,
-                    f"\nTranslated Lyrics:\n{translated_lyrics.encode('latin-1', 'replace').decode('latin-1')}",
-                )
-        else:
-            pdf.multi_cell(
-                0,
-                10,
-                f"Lyrics not found for {song.get('title', 'Unknown Title')} by {song.get('artist', 'Unknown Artist')}.",
+            songs_data.append(
+                {
+                    "title": title,
+                    "artist": artist,
+                    "lyrics": lyrics,
+                    "translated_lyrics": translated_lyrics,
+                }
             )
         print(data.get("lyrics", "No lyrics found") if data else "No data found")
 
-    pdf_name = "lyrics.pdf"
-    pdf_name.encode("latin-1", "replace")
-    try:
-        pdf.output(pdf_name).encode("latin-1")
-        print(f"PDF generated successfully: {pdf_name}")
-    except Exception as e:
-        print(f"Error generating PDF: {e}")
+    # create PDF
+    generate_pdf(songs_data)
 
 
 if __name__ == "__main__":
