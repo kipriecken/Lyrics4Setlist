@@ -1,7 +1,12 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
+import os
+import uuid
 import lyrics
 
 app = Flask(__name__)
+
+OUTPUT_DIR = "outputs"
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 @app.route("/health")
@@ -47,7 +52,22 @@ def generate_pdf():
 
         songs_data.append(result)
 
-    return jsonify({"message": "PDF generation started", "songs_data": songs_data}), 200
+    filename = f"lyrics_{uuid.uuid4().hex[:8]}.pdf"
+    output_path = os.path.join(OUTPUT_DIR, filename)
+
+    try:
+        lyrics.generate_pdf(songs_data, output_path)
+        print(f"PDF generated successfully: {output_path}")
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        return jsonify({"error": "Failed to generate PDF", "details": str(e)}), 500
+
+    return send_file(
+        output_path,
+        as_attachment=True,
+        download_name=filename,
+        mimetype="application/pdf",
+    )
 
 
 if __name__ == "__main__":
