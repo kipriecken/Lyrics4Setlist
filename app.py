@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+import lyrics
 
 app = Flask(__name__)
 
@@ -15,16 +16,25 @@ def generate_pdf():
     if not data or "songs" not in data:
         return jsonify({"error": "Invalid request, 'songs' key is required"}), 400
 
-    songs_data = data["songs"]
-    if not isinstance(songs_data, list):
+    songs = data["songs"]
+    if not isinstance(songs, list):
         return jsonify({"error": "'songs' should be a list of song data"}), 400
 
-    return jsonify(
-        {
-            "message": "PDF generation logic would be called here",
-            "songs": songs_data,
-        }
-    )
+    songs_data = []
+    for song in songs:
+        title = song.get("title")
+        artist = song.get("artist")
+
+        if not title or not artist:
+            continue
+
+        result = lyrics.search_song(title, artist)
+        if not result:
+            result = {"title": title, "artist": artist, "lyrics": "No lyrics found"}
+
+        songs_data.append(result)
+
+    return jsonify({"message": "PDF generation started", "songs_data": songs_data}), 200
 
 
 if __name__ == "__main__":
