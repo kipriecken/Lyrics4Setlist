@@ -31,6 +31,19 @@ def generate_pdf():
         result = lyrics.search_song(title, artist)
         if not result:
             result = {"title": title, "artist": artist, "lyrics": "No lyrics found"}
+            continue
+
+        language = lyrics.detect_language(result["lyrics"])
+        result["language"] = language
+        result["translated_lyrics"] = None
+
+        if language and language != "en":
+            try:
+                translated_lyrics = lyrics.translate_lyrics(result["lyrics"], language)
+                result["translated_lyrics"] = translated_lyrics
+            except Exception as e:
+                print(f"Error translating lyrics for {title} by {artist}: {e}")
+                result["translated_lyrics"] = None
 
         songs_data.append(result)
 
