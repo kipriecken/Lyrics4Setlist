@@ -1,10 +1,11 @@
 # Lyrics-to-pdf
 
-A tool for creating a pdf of lyrics and translated lyrics based on a csv of song titles and artists, using the api, a wrapper for the genius api.<br/>
+Generate a pdf of lyrics (including translation) given song titles and artists.<br/>
 
-> Why? <br/> As a Fever Candlelight musician, I study the music (potentially 20 different shows a month) but seeing as we talk about the music, I am curious about the lyrics. I do not have time to Google and copy/paste lyrics for each song as I am focused on the music. Then, if the lyrics are in another language, I have to LLMs are unable to get past licensing to produce a PDF. A PDF is the perfect format to load onto my iPad for shows. I play up to 20 shows a month with potentially all different setlists. This saves immense time.
+### Motivation
+>As a Fever Candlelight musician, I study and learn lots of music (potentially 20 different shows a month). A central part of the performances is talking to the audience and I believe it is important to know the lyrics. Googling and copying/pasting lyrics for each song is very time consuming, much less translating. I would use an LLM but they are unable to get past licensing to search for lyrics. Further, since we use iPads for the shows, A PDF is the perfect format. Lastly, since Fever Candlelight concerts happen across the globe, this tool can easily be extended to translate lyrics into languages other than English.
 
-Fever Candlelight concerts are about bringing audiences and musicians closer together. They happen across the globe. This tool can easily be used to translate lyrics into any language.
+## Setup
 
 Generate an access token for free at [genius.com/api-clients](genius.com/api-clients) and store it as an environment variable (see `.env.example`).
 
@@ -12,20 +13,21 @@ Generate an access token for free at [genius.com/api-clients](genius.com/api-cli
 export GENIUS_ACCESS_TOKEN="your-token-here"
 ```
 
-Example:
-
-```
-export GENIUS_ACCESS_TOKEN="aslkfj34o1u2-309834234okj"
-```
-
 <br/>
 
-Setup:
+Create virtual environment:
 
 ```
-python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
+python3 -m venv .venv && source .venv/bin/activate
 ```
 
+### Option 1: Run in Terminal with CSV file as input
+
+Install dependencies:
+
+```
+pip install -r requirements.txt
+```
 <br/>
 
 Run:
@@ -34,12 +36,15 @@ Run:
 python3 lyrics.py
 ```
 
-## Run as web API
+### Option 2: Run as web API with JSON input
 
-(Using virtual environment)
-
+Install dependencies:
 ```bash
 pip install -r requirements-web.txt
+```
+<br/>
+Run:
+```
 flask run -p 8000
 ```
 
@@ -58,7 +63,7 @@ curl -X POST http://localhost:8000/generate-pdf \
 
 ---
 
-Main packages used:
+Packages:
 
 - [lyricsgenius](https://lyricsgenius.readthedocs.io/en/master/) for fetching lyrics
 - [Googletrans](https://pypi.org/project/googletrans/) for translation
