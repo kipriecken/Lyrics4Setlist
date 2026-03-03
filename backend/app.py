@@ -1,9 +1,11 @@
 from flask import Flask, jsonify, request, send_file
+from flask_cors import CORS
 import os
 import uuid
 import lyrics
 
 app = Flask(__name__)
+CORS(app)
 
 OUTPUT_DIR = "outputs"
 os.makedirs(OUTPUT_DIR, exist_ok=True)

@@ -66,6 +66,24 @@ curl -X POST http://localhost:8000/generate-pdf \
   --output lyrics.pdf
 ```
 
+## Frontend
+
+In new terminal window:
+
+```
+cd ../frontend && pnpm install
+```
+
+Run Next JS app:
+
+```
+pnpm run dev
+```
+
+Navigate to `localhost:3000` in browser. If the backend is running locally, you will be able to generate and download a sample PDF.
+
+---
+
 ---
 
 Packages:
