@@ -20,7 +20,28 @@ if not LYRICS_GENIUS_KEY:
     )
     genius = None
 else:
-    genius = lyricsgenius.Genius(LYRICS_GENIUS_KEY, timeout=15, retries=3, sleep_time=1)
+    genius = lyricsgenius.Genius(
+        LYRICS_GENIUS_KEY,
+        timeout=15,
+        retries=3,
+        sleep_time=1,
+        remove_section_headers=True,
+        skip_non_songs=True,
+        excluded_terms=["(Remix)", "(Live)", "(Acoustic)"],
+    )
+    genius.session.headers.update(
+        {
+            "User-Agent": "LyricsToPDF/1.0",
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate",
+            "Referer": "https://lyrics-to-pdf.onrender.com",
+            "Origin": "https://lyrics-to-pdf.onrender.com",
+            "Connection": "keep-alive",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "cross-site",
+        }
+    )
     genius.verbose = DEBUG
 
 
