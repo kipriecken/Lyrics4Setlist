@@ -1,10 +1,11 @@
 "use client";
+import { useState } from "react";
 
 export default function Home() {
+  const [song, setSong] = useState("Shape of You");
+  const [artist, setArtist] = useState("Ed Sheeran");
+
   async function handleButtonClick() {
-    console.log(
-      JSON.stringify({ title: "Shape of You", artist: "Ed Sheeran" }),
-    );
     const res = fetch("http://localhost:8000/generate-pdf", {
       method: "POST",
       headers: {
@@ -13,8 +14,8 @@ export default function Home() {
       body: JSON.stringify({
         songs: [
           {
-            title: "Shape of You",
-            artist: "Ed Sheeran",
+            title: song,
+            artist: artist,
           },
         ],
       }),
@@ -47,7 +48,20 @@ export default function Home() {
             the lyrics.
           </p>
           <p className="mt-4">
-            Try it now with Ed Sheeran&apos;s &quot;Shape of You&quot;.
+            Fetch lyrics for:
+            <input
+              type="text"
+              value={song}
+              onChange={(e) => setSong(e.target.value)}
+              className="mx-2 rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            />{" "}
+            by
+            <input
+              type="text"
+              value={artist}
+              onChange={(e) => setArtist(e.target.value)}
+              className="mx-2 rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+            />
           </p>
           <button
             className="mt-6 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"

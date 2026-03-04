@@ -86,7 +86,7 @@ def detect_language(text: str) -> Optional[str]:
         return None
 
 
-def is_match(requested: str, actual: str, threshold=80) -> bool:
+def is_match(requested: str, actual: str, threshold=60) -> bool:
     """Determines if the requested and actual strings are a close match based on a similarity threshold.
 
     Args:
@@ -190,26 +190,55 @@ def generate_pdf(
                 f"Lyrics not found for {title} by {artist}.",
             )
             continue
-        pdf.set_font("Arial", "B", size=14)
+        arialttf_path = os.path.join(
+            os.path.dirname(__file__), "Arial-Unicode-Bold.ttf"
+        )
+        if os.path.exists(arialttf_path):
+            print(f"Adding unicode font for lyrics: {arialttf_path}")
+            pdf.add_font("ArialUnicode", "", arialttf_path, uni=True)
+            pdf.add_font("ArialUnicode", "B", arialttf_path, uni=True)
+            font_family = "ArialUnicode"
+        else:
+            font_family = "Arial"
+
+        pdf.set_font(font_family, "B", size=14)
         pdf.cell(0, 10, f"{title} by {artist}", ln=True)
-        pdf.set_font("Arial", size=12)
-        pdf.multi_cell(0, 10, lyrics.encode("latin-1", "replace").decode("latin-1"))
+        pdf.set_font(font_family, size=12)
+        lyrics = lyrics.replace("’", "'").replace("\u2019", "'")
+        pdf.multi_cell(
+            0, 10, lyrics.encode("utf-8", "replace").decode("utf-8", "replace")
+        )
 
         if translated_lyrics:
-            pdf.set_font("Arial", "I", size=12)
+            arialttf_path = os.path.join(
+                os.path.dirname(__file__), "Arial-Unicode-Bold.ttf"
+            )
+            if os.path.exists(arialttf_path):
+                try:
+                    pdf.add_font("ArialUnicode", "I", arialttf_path, uni=True)
+                except Exception:
+                    # some font files don't include an italic variant; ignore
+                    pass
+            pdf.set_font(font_family, "I", size=12)
             pdf.cell(0, 10, "Translated Lyrics:", ln=True)
-            pdf.set_font("Arial", size=12)
+            pdf.set_font(font_family, size=12)
+            translated_lyrics = translated_lyrics.replace("’", "'").replace(
+                "\u2019", "'"
+            )
             pdf.multi_cell(
-                0, 10, translated_lyrics.encode("latin-1", "replace").decode("latin-1")
+                0,
+                10,
+                translated_lyrics.encode("utf-8", "replace").decode("utf-8", "replace"),
             )
 
         pdf.ln(10)  # Add some space between songs
 
     try:
         pdf.output(pdf_name)
-        print(f"PDF generated successfully: {pdf_name}")
     except Exception as e:
         print(f"Error generating PDF: {e}")
+
+    print(f"PDF generated successfully: {pdf_name}")
 
 
 def main():
