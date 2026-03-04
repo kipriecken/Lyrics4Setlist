@@ -24,8 +24,12 @@ else:
     session = requests.Session()
     session.headers.update(
         {
-            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ... Chrome/128",
-            "Referer": "https://genius.com",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://genius.com/",
+            "Origin": "https://genius.com",
+            "Connection": "keep-alive",
         }
     )
 
