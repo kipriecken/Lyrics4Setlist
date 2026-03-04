@@ -9,6 +9,7 @@ from fpdf import FPDF
 from googletrans import Translator
 from langdetect import detect
 from rapidfuzz import fuzz
+import requests
 
 load_dotenv()
 
@@ -20,6 +21,14 @@ if not LYRICS_GENIUS_KEY:
     )
     genius = None
 else:
+    session = requests.Session()
+    session.headers.update(
+        {
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ... Chrome/128",
+            "Referer": "https://genius.com",
+        }
+    )
+
     genius = lyricsgenius.Genius(
         LYRICS_GENIUS_KEY,
         timeout=15,
@@ -29,19 +38,9 @@ else:
         skip_non_songs=True,
         excluded_terms=["(Remix)", "(Live)", "(Acoustic)"],
     )
-    genius.session.headers.update(
-        {
-            "User-Agent": "LyricsToPDF/1.0",
-            "Accept": "application/json",
-            "Accept-Encoding": "gzip, deflate",
-            "Referer": "https://lyrics-to-pdf.onrender.com",
-            "Origin": "https://lyrics-to-pdf.onrender.com",
-            "Connection": "keep-alive",
-            "Sec-Fetch-Dest": "empty",
-            "Sec-Fetch-Mode": "cors",
-            "Sec-Fetch-Site": "cross-site",
-        }
-    )
+
+    genius._session = session
+
     genius.verbose = DEBUG
 
 
