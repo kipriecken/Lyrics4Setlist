@@ -6,6 +6,9 @@ import { handleButtonClick } from "./utils/helpers";
 export default function Home() {
   const [song, setSong] = useState("Shape of You");
   const [artist, setArtist] = useState("Ed Sheeran");
+  const [fetching, setFetching] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const songs = [
     {
@@ -14,8 +17,24 @@ export default function Home() {
     },
   ];
 
-  const handleGeneratePDF = () => {
-    handleButtonClick(songs);
+  const handleGeneratePDF = async () => {
+    setSuccess(null);
+    setFetching(true);
+    await handleButtonClick(songs)
+      .then(() => {
+        setSuccess(
+          "PDF generated and downloaded successfully! Check your downloads.",
+        );
+        setError(null);
+      })
+      .catch((err) => {
+        setError("Failed to generate PDF. Please try again.");
+        console.error("Error generating PDF:", err);
+        setSuccess(null);
+      })
+      .finally(() => {
+        setFetching(false);
+      });
   };
 
   return (
@@ -45,11 +64,26 @@ export default function Home() {
             />
           </p>
           <button
-            className="mt-6 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+            className="mt-6 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
             onClick={handleGeneratePDF}
+            disabled={fetching}
           >
             Generate and download PDF
           </button>
+          {fetching && (
+            <div className="mt-4">
+              Generating PDF...{" "}
+              <div className="flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-blue-200 rounded-full animate-spin border-t-blue-600"></div>
+              </div>
+            </div>
+          )}
+          {error && <p className="mt-4 text-red-500">{error}</p>}
+          {success && (
+            <p className="mt-4 bg-green-100 text-green-700 rounded px-4 py-2">
+              {success}
+            </p>
+          )}
           <br />
         </header>
       </main>
