@@ -57,7 +57,7 @@ def get_csv_path() -> str:
     csv_path = input(
         "Provide a path to a CSV file (hit Enter to generate using sample data): "
     )
-    return csv_path or "sample-data-2.csv"
+    return csv_path or "data/samples/sample-data-2.csv"
 
 
 def read_songs_from_csv(csv_path: str) -> List[Dict[str, str]]:
@@ -214,8 +214,11 @@ def generate_pdf(
                 f"Lyrics not found for {title} by {artist}.",
             )
             continue
+        # There is an issue with encoding certain characters in the lyrics (e.g. curly apostrophes)
+        # that causes the PDF generation to fail. To work around this, I add a unicode font and
+        # replace the known problematic character with its closest ASCII equivalent.
         arialttf_path = os.path.join(
-            os.path.dirname(__file__), "Arial-Unicode-Bold.ttf"
+            os.path.dirname(__file__), "fonts/Arial-Unicode-Bold.ttf"
         )
         if os.path.exists(arialttf_path):
             print(f"Adding unicode font for lyrics: {arialttf_path}")
@@ -235,7 +238,7 @@ def generate_pdf(
 
         if translated_lyrics:
             arialttf_path = os.path.join(
-                os.path.dirname(__file__), "Arial-Unicode-Bold.ttf"
+                os.path.dirname(__file__), "fonts/Arial-Unicode-Bold.ttf"
             )
             if os.path.exists(arialttf_path):
                 try:
