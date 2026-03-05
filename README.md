@@ -60,7 +60,7 @@ curl -X POST http://localhost:8000/generate-pdf \
   -H "Content-Type: application/json" \
   -d '{
     "songs": [
-      {"title": "Hello", "artist": "Adele"}
+      {"title": "Shape of You", "artist": "Ed Sheeran"}
     ]
   }' \
   --output lyrics.pdf

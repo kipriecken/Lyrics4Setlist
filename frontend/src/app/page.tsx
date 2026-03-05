@@ -1,41 +1,22 @@
 "use client";
 import { useState } from "react";
 
+import { handleButtonClick } from "./utils/helpers";
+
 export default function Home() {
   const [song, setSong] = useState("Shape of You");
   const [artist, setArtist] = useState("Ed Sheeran");
 
-  async function handleButtonClick() {
-    const res = fetch("http://localhost:8000/generate-pdf", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        songs: [
-          {
-            title: song,
-            artist: artist,
-          },
-        ],
-      }),
-    })
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "lyrics.pdf";
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      })
-      .catch((error) => {
-        console.error("Error generating PDF:", error);
-      });
+  const songs = [
+    {
+      title: song,
+      artist: artist,
+    },
+  ];
 
-    await res;
-  }
+  const handleGeneratePDF = () => {
+    handleButtonClick(songs);
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -65,7 +46,7 @@ export default function Home() {
           </p>
           <button
             className="mt-6 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-            onClick={handleButtonClick}
+            onClick={handleGeneratePDF}
           >
             Generate and download PDF
           </button>
