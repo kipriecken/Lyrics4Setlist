@@ -1,10 +1,21 @@
-# Lyrics-to-pdf
+# Lyrics4Setlist
 
 Generate a pdf of lyrics (including translation) given song titles and artists.<br/>
 
 ### Motivation
 
-> I play viola in string quartet concerts where part of the mission is connecting the musicians and audience in a small concert format. I study and learn up to 20 different shows a month. A central part of the performances is speaking to the audience about the music. I find it helpful to have the lyrics for reference. When listening to the songs, however, I rarely catch all the lyrics; the main focus of my practicing is on the notes and rhythms. Googling and copying/pasting lyrics for each song, then creating a PDF from those, is very time consuming and repetitive. If the lyrics require translation, yet another step is needed. The process is ripe for automation. LLM's are unable to automate this process because of lyrics licensing. This tool simplifies the process into just a few steps, producing a PDF which is the perfect format for sheet music iPad apps such as ForScore. Further, this tool can easily be extended to translate lyrics into languages other than English, which is helpful considering that these concerts happen across the globe.
+> I play viola in string quartet concerts where part of the mission is connecting the musicians and audience in a small concert format, studying and learning up to 20 different shows a month.
+>
+> A central part of the performances involves speaking to the audience about the music and I find it helpful to have the lyrics for reference.
+>
+> When listening to the songs, however, I rarely catch all the lyrics; the main focus of my practicing is on the notes and rhythms. Googling and copying/pasting lyrics for each song, then creating a PDF from those, is very time consuming and repetitive. Translation, if required, is yet another step. Further, LLM's are unable to automate this process because of lyrics licensing.
+>
+> Lyrics4Setlist simplifies the process into just a few steps, producing complete lyrics for all found songs in PDF format, the perfect format for sheet music iPad apps such as ForScore. This tool can also be extended to translate lyrics into languages other than English, which is helpful considering that these concerts happen across the globe.
+>
+
+
+### Sample PDF
+[Sample.pdf](https://github.com/user-attachments/files/25772117/Sample.pdf)
 
 ## Setup
 
