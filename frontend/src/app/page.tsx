@@ -68,6 +68,18 @@ export default function Home() {
                   }}
                   className="mx-2 rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                 />
+                {/* delete song */}
+                <button
+                  onClick={() => {
+                    const newSongs = [...songs]
+                    newSongs.splice(i, 1)
+                    setSongs(newSongs)
+                  }}
+                  className="ml-2 rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  disabled={songs.length === 1}
+                >
+                  Delete
+                </button>
               </div>
             ))}
             <button
