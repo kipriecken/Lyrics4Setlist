@@ -2,6 +2,10 @@
 
 Generate a pdf of lyrics (including translation) given song titles and artists.<br/>
 
+<img src="images/Screenshot_success.png" alt="Screenshot success" width="600"/>
+
+[Sample output PDF](Output_sample.pdf)
+
 ### Motivation
 
 > I play in string quartet performances of popular music arrangements, aimed at connecting musicians and audiences in a small concert format. A central part of the performances involves introducing the music to the audience and speaking about it. I find it helpful to have the lyrics for reference, but when listening to the songs I rarely catch them all. My main focus of my practicing is always on the notes and rhythms.
@@ -10,10 +14,6 @@ Generate a pdf of lyrics (including translation) given song titles and artists.<
 >
 > Lyrics4Setlist simplifies the process, producing complete lyrics (including translation to English) for requested songs in PDF format, the perfect format for sheet music reading iPad apps such as ForScore. This tool can also be extended to translate lyrics into languages other than English, which is helpful considering that these concerts happen across the globe.
 >
-
-
-### Sample PDF
-[Sample.pdf](https://github.com/user-attachments/files/25772117/Sample.pdf)
 
 ## Setup
 
