@@ -2,7 +2,7 @@
 
 Generate a pdf of lyrics (including translation) given song titles and artists.<br/>
 
-![Screenshot success](images/Screenshot_success.png)
+<img src="images/Screenshot_success.png" alt="Screenshot success" width="600"/>
 
 [Sample output PDF](Output_sample.pdf)
 
