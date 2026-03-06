@@ -5,7 +5,7 @@ Generate a pdf of lyrics (including translation) given song titles and artists.<
 <img src="images/Screenshot_success.png" alt="Screenshot success" width="700"/>
 <img src="images/Time_Pink_Floyd.png" alt="Screenshot success" width="500"/>
 
-[Sample output PDF](Output_sample.pdf)
+[Sample output PDF](images/Output_sample.pdf)
 
 ### Motivation
 
