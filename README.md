@@ -11,6 +11,7 @@ Generate a pdf of lyrics (including translation) given song titles and artists.<
 > Lyrics4Setlist simplifies the process, producing complete lyrics (including translation to English) for requested songs in PDF format, the perfect format for sheet music reading iPad apps such as ForScore. This tool can also be extended to translate lyrics into languages other than English, which is helpful considering that these concerts happen across the globe.
 >
 
+![Screenshot success](images/Screenshot_success.png)
 
 ### Sample PDF
 [Sample.pdf](https://github.com/user-attachments/files/25772117/Sample.pdf)
