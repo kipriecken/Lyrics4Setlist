@@ -1,7 +1,7 @@
-interface Song {
+export type Song = {
   title: string;
   artist: string;
-}
+};
 
 export async function handleButtonClick(songs: Song[]) {
   const res = fetch("http://localhost:8000/generate-pdf", {
