@@ -237,6 +237,7 @@ def generate_pdf(
         )
 
         if translated_lyrics:
+            pdf.add_page()  # Start translated lyrics on a new page
             arialttf_path = os.path.join(
                 os.path.dirname(__file__), "fonts/Arial-Unicode-Bold.ttf"
             )
@@ -246,8 +247,8 @@ def generate_pdf(
                 except Exception:
                     # some font files don't include an italic variant; ignore
                     pass
-            pdf.set_font(font_family, "I", size=12)
-            pdf.cell(0, 10, "Translated Lyrics:", ln=True)
+            pdf.set_font(font_family, "B", size=14)
+            pdf.cell(0, 10, f"{title} by {artist} (translated)", ln=True)
             pdf.set_font(font_family, size=12)
             translated_lyrics = translated_lyrics.replace("’", "'").replace(
                 "\u2019", "'"
