@@ -198,7 +198,6 @@ def generate_pdf(
 
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.add_page()
     pdf.set_font("Arial", size=12)
 
     for song in songs_data:
@@ -228,6 +227,7 @@ def generate_pdf(
         else:
             font_family = "Arial"
 
+        pdf.add_page()
         pdf.set_font(font_family, "B", size=14)
         pdf.cell(0, 10, f"{title} by {artist}", ln=True)
         pdf.set_font(font_family, size=12)
