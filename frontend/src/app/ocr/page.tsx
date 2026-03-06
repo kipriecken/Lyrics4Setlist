@@ -20,13 +20,44 @@ const OcrReader = () => {
   }
 
   const extractSongsFromText = (text: string) => {
-    const lines = text.split('\n')
+    // remove all starting text ending in "setlist"
+    const lines = text
+      .split('\n')
+      .filter((line) => !line.toLowerCase().includes('setlist'))
+      .filter((line) => line.trim() !== '')
+
     const songs: { title: string; artist: string }[] = []
 
     lines.forEach((line) => {
-      line = line.split(/\d+\./)[1]?.trim() // Remove leading numbers and dots
-      if (line) {
-        songs.push({ title: line, artist: artist })
+      // remove leading numbers if numbers are followed by a dot (e.g., "1. Song Title")
+      if (/^\d+\./.test(line)) {
+        line = line.split(/\d+\./)[1]?.trim() // Remove leading numbers and dots
+      }
+      if (line === undefined) return
+
+      // remove leading 1-2 characters or ® followed by whitespace
+      line = line.replace(/^[a-zA-Z®]{1,2}\s+/, '').trim()
+
+      // remove any text starting with "("
+      line = line.replace(/\(.*$/, '').trim()
+
+      // Remove "Encore:" if it exists
+      line = line.replace(/^Encore:\s+/, '').trim()
+
+      // if line contains "—" or "-", split into title and artist
+      if (line.includes('—') || line.includes('-')) {
+        const parts = line.split(/[-—]/).map((part) => part.trim())
+        // if there are more than 2 parts, assume the last part is the title and the rest is the artist
+        if (parts.length > 2) {
+          const title = parts.pop() || ''
+          const artist = parts.join(' - ')
+          songs.push({ title, artist })
+        } else if (parts.length === 2) {
+          songs.push({ title: parts[1], artist: parts[0] })
+        }
+      } else {
+        // if there is no separator, assume the whole line is the title and use the provided artist
+        songs.push({ title: line, artist })
       }
     })
 
@@ -39,6 +70,7 @@ const OcrReader = () => {
         <input
           type="file"
           onChange={(e) => setImage(e.target.files?.[0] || null)}
+          onClick={() => setArtist('')}
           className="block w-full text-sm text-gray-500
   file:mr-4 file:py-2 file:px-4
   file:rounded-full file:border-0
@@ -52,7 +84,6 @@ const OcrReader = () => {
         >
           Read Image
         </button>
-        {/* set artist  */}
         <input
           type="text"
           value={artist}
@@ -60,6 +91,12 @@ const OcrReader = () => {
           className="mt-4 rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
           placeholder="Enter artist name"
         />
+        <button
+          onClick={() => setText('')}
+          className="mt-4 rounded bg-red-500 px-4 py-2 text-white hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          Clear Songs
+        </button>
         <ul className="mt-4">
           {extractSongsFromText(text).map((song, index) => (
             <li key={index} className="mb-2">
