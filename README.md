@@ -13,8 +13,8 @@ Generate a pdf of lyrics (including translation) given song titles and artists.<
 
 ![Screenshot success](images/Screenshot_success.png)
 
-### Sample PDF
-[Sample.pdf](https://github.com/user-attachments/files/25772117/Sample.pdf)
+### Sample output PDF
+[Output PDF](Output_sample.pdf)
 
 ## Setup
 
