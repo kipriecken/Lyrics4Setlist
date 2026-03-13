@@ -64,6 +64,15 @@ export default function Home() {
     [setSongs]
   )
 
+  const flipSongsAndArtists = useCallback(() => {
+    setSongs((current) =>
+      current.map((song) => ({
+        title: song.artist,
+        artist: song.title,
+      }))
+    )
+  }, [setSongs])
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
@@ -74,7 +83,15 @@ export default function Home() {
           </p>
           <OcrReader onSongsExtracted={handleExtractedSongs} />
           <div className="mt-4 w-full">
-            <div className="text-sm font-semibold">Fetch lyrics for:</div>
+            <div className="flex justify-between items-center">
+              <div className="text-sm font-semibold">Fetch lyrics for:</div>
+              <button
+                onClick={flipSongsAndArtists}
+                className="rounded bg-gray-500 px-3 py-2 text-white hover:bg-blue-600"
+              >
+                Flip title/artist
+              </button>
+            </div>
             <div className="mt-2 space-y-4">
               {songs.map((song, index) => (
                 <SongInput
