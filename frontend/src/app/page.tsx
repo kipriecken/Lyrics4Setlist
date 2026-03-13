@@ -1,10 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
-import { handleButtonClick } from './utils/helpers'
+import { handleButtonClick, type Song } from './utils/helpers'
+import OcrReader from './components/OcrReader'
+import SongInput from './components/songInput'
 
 export default function Home() {
-  const [songs, setSongs] = useState([
+  const [songs, setSongs] = useState<Song[]>([
     { title: 'Shape of You', artist: 'Ed Sheeran' },
   ])
   const [fetching, setFetching] = useState(false)
@@ -31,63 +33,76 @@ export default function Home() {
       })
   }
 
+  const updateSong = useCallback(
+    (index: number, updated: Song) => {
+      setSongs((current) => {
+        const copy = [...current]
+        copy[index] = updated
+        return copy
+      })
+    },
+    [setSongs]
+  )
+
+  const removeSong = useCallback(
+    (index: number) => {
+      setSongs((current) => {
+        const next = [...current]
+        next.splice(index, 1)
+        return next
+      })
+    },
+    [setSongs]
+  )
+
+  const handleExtractedSongs = useCallback(
+    (extracted: Song[]) => {
+      if (extracted.length > 0) {
+        setSongs(extracted)
+      }
+    },
+    [setSongs]
+  )
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <header>
+        <header className="w-full">
           <h1 className="text-2xl font-bold">Lyrics4Setlist</h1>
           <p className="mt-4 text-lg">
-            A simple tool to convert song lyrics into a PDF format. Just enter
-            song titles and artists below and receive a beautifully formatted
-            PDF of the lyrics with translations if in a different language.
-            Perfect for musicians, setlists, or just fans who want to keep their
-            favorite lyrics handy!
+            Generate a PDF of setlist lyrics with English translations.
           </p>
-          <div className="mt-4">
-            Fetch lyrics for:
-            {songs.map((song, i) => (
-              <div key={i} className="flex items-center mt-2">
-                <input
-                  type="text"
-                  value={song.title}
-                  onChange={(e) => {
-                    const newSongs = [...songs]
-                    newSongs[i].title = e.target.value
-                    setSongs(newSongs)
-                  }}
-                  className="mx-2 rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+          <OcrReader onSongsExtracted={handleExtractedSongs} />
+          <div className="mt-4 w-full">
+            <div className="text-sm font-semibold">Fetch lyrics for:</div>
+            <div className="mt-2 space-y-4">
+              {songs.map((song, index) => (
+                <SongInput
+                  key={index}
+                  index={index}
+                  song={song}
+                  onChange={updateSong}
+                  onRemove={removeSong}
+                  canRemove={songs.length > 1}
                 />
-                {'by'}
-                <input
-                  type="text"
-                  value={song.artist}
-                  onChange={(e) => {
-                    const newSongs = [...songs]
-                    newSongs[i].artist = e.target.value
-                    setSongs(newSongs)
-                  }}
-                  className="mx-2 rounded border border-gray-300 px-2 py-1 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
-                />
-                {/* delete song */}
-                <button
-                  onClick={() => {
-                    const newSongs = [...songs]
-                    newSongs.splice(i, 1)
-                    setSongs(newSongs)
-                  }}
-                  className="ml-2 rounded bg-red-500 px-2 py-1 text-white hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  disabled={songs.length === 1}
-                >
-                  Delete
-                </button>
-              </div>
-            ))}
-            <button
-              onClick={() => setSongs([...songs, { title: '', artist: '' }])}
-              className="m-2 rounded bg-gray-500 px-2 py-1 text-white hover:bg-green-600"
-            >
-              + Add another song
-            </button>
+              ))}
+            </div>
+            <div className="mt-3 flex justify-between">
+              <button
+                onClick={() => setSongs([{ title: '', artist: '' }])}
+                className="rounded bg-gray-500 px-3 py-2 text-white hover:bg-red-600"
+              >
+                Clear
+              </button>
+              <button
+                onClick={() =>
+                  setSongs((prev) => [...prev, { title: '', artist: '' }])
+                }
+                className="rounded bg-gray-500 px-3 py-2 text-white hover:bg-green-600"
+              >
+                +
+              </button>
+            </div>
           </div>
           <button
             className="mt-6 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
