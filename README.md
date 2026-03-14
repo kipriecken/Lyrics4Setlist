@@ -1,6 +1,6 @@
 # Lyrics4Setlist
 
-Generate a pdf of lyrics (including translation) given song titles and artists.<br/>
+AI-powered tool to read lyrics from a setlist and generate a pdf of lyrics.<br/>
 
 <img src="images/Screenshot_success.png" alt="Screenshot success" width="600"/>
 
@@ -8,11 +8,11 @@ Generate a pdf of lyrics (including translation) given song titles and artists.<
 
 ### Motivation
 
-> I play in string quartet performances of popular music arrangements, aimed at connecting musicians and audiences in a small concert format. A central part of the performances involves introducing the music to the audience and speaking about it. I find it helpful to have the lyrics for reference, but when listening to the songs I rarely catch them all. My main focus of my practicing is always on the notes and rhythms.
+> I play in string quartet performances of popular music arrangements where a central part of the performance involves speaking to the audience about the music. I find it helpful to have the lyrics for reference, but when listening to the songs I rarely catch them all.
 >
-> I study and learn up to 20 different of these shows a month and googling and copying/pasting lyrics for each song is very time consuming and repetitive. Translation, if required, is yet another step. Further, LLM's are unable to automate this process because of lyrics licensing.
+> I play up to 20 different shows a month and manually copying (and translating) lyrics for each song is time consuming and exhaustive.
 >
-> Lyrics4Setlist simplifies the process, producing complete lyrics (including translation to English) for requested songs in PDF format, the perfect format for sheet music reading iPad apps such as ForScore. This tool can also be extended to translate lyrics into languages other than English, which is helpful considering that these concerts happen across the globe.
+> Lyrics4Setlist automates this process, outputting requested lyrics, with translations, in one clean PDF.
 >
 
 ## Setup
@@ -97,6 +97,7 @@ Navigate to `localhost:3000` in browser. If the backend is running locally, you 
 
 Packages:
 
+- [Tesseract OCR](https://tesseract.projectnaptha.com/) for pulling text from image
 - [lyricsgenius](https://lyricsgenius.readthedocs.io/en/master/) for fetching lyrics
 - [Googletrans](https://pypi.org/project/googletrans/) for translation
 - [FPDF2](https://py-pdf.github.io/fpdf2/index.html]) for PDF generation
