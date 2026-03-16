@@ -2,8 +2,10 @@
 
 AI-powered tool to read lyrics from a setlist and generate a pdf of lyrics.<br/>
 
-<img src="images/Screenshot_success.png" alt="Screenshot success" width="700"/>
-<img src="images/Time_Pink_Floyd.png" alt="Screenshot success" width="500"/>
+<div align="center">
+  <img src="images/Screenshot_success.png" alt="Screenshot success" width="700"/>
+  <img src="images/Time_Pink_Floyd.png" alt="Screenshot success" width="500"/>
+</div>
 
 [Sample output PDF](images/Output_sample.pdf)
 
