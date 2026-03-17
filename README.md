@@ -3,7 +3,7 @@
 AI-powered tool to read song titles from a setlist and generate a pdf of lyrics, including translations.<br/>
 
 <div align="center">
-  <img src="images/Screenshot_Success.png" alt="Screenshot success" width="700"/>
+  <img src="images/Screenshot_success.png" alt="Screenshot success" width="700"/>
   <img src="images/Time_Pink_Floyd.png" alt="Screenshot success" width="500"/>
 </div>
 
