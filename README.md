@@ -3,7 +3,7 @@
 AI-powered tool to read song titles from a setlist and generate a pdf of lyrics, including translations.<br/>
 
 <div align="center">
-  <img src="images/Screenshot_success.png" alt="Screenshot success" width="700"/>
+  <img src="images/Screenshot_Success.png" alt="Screenshot success" width="700"/>
   <img src="images/Time_Pink_Floyd.png" alt="Screenshot success" width="500"/>
 </div>
 
@@ -16,7 +16,6 @@ AI-powered tool to read song titles from a setlist and generate a pdf of lyrics,
 > I play up to 20 different shows a month and manually copying (and translating) lyrics for each song is time consuming and exhaustive.
 >
 > Lyrics4Setlist automates this process, outputting requested lyrics, with translations, in one clean PDF.
->
 
 ## Setup
 
