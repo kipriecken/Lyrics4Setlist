@@ -1,6 +1,6 @@
 # Lyrics4Setlist
 
-AI-powered tool to read lyrics from a setlist and generate a pdf of lyrics.<br/>
+AI-powered tool to read song titles from a setlist and generate a pdf of lyrics, including translations.<br/>
 
 <div align="center">
   <img src="images/Screenshot_success.png" alt="Screenshot success" width="700"/>
