@@ -19,7 +19,7 @@ AI-powered tool to read song titles from a setlist and generate a pdf of lyrics,
 
 ## Setup
 
-Generate an access token for free at [genius.com/api-clients](genius.com/api-clients) and store it as an environment variable (see `.env.example`).
+Generate an access token for free at [genius.com/api-clients](https://genius.com/api-clients) and store it as an environment variable (see `.env.example`).
 
 ```
 export GENIUS_ACCESS_TOKEN="your-token-here"
