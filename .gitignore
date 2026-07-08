@@ -1,2 +1,3 @@
 .env
 backend/outputs/*
+.DS_Store
