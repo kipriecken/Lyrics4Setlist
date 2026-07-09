@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "vercel-build": "npm run prepare && next build",
+    "prepare": "true",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
