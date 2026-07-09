@@ -3,8 +3,11 @@ export type Song = {
   artist: string
 }
 
+const NEXT_PUBLIC_API_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+
 export async function handleButtonClick(songs: Song[]) {
-  const res = fetch('http://localhost:8000/generate-pdf', {
+  const res = fetch(`${NEXT_PUBLIC_API_URL}/generate-pdf`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
