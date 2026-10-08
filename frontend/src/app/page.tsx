@@ -7,7 +7,7 @@ import SongInput from './components/songInput'
 
 export default function Home() {
   const [songs, setSongs] = useState<Song[]>([
-    { title: 'Shape of You', artist: 'Ed Sheeran' },
+    { title: 'Hello', artist: 'Adele' },
   ])
   const [fetching, setFetching] = useState(false)
   const [error, setError] = useState<string | null>(null)
