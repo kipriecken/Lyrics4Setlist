@@ -4,12 +4,12 @@ import os
 from typing import Dict, List, Optional
 
 import lyricsgenius
+import requests
 from dotenv import load_dotenv
 from fpdf import FPDF
 from googletrans import Translator
 from langdetect import detect
 from rapidfuzz import fuzz
-import requests
 
 load_dotenv()
 
@@ -60,7 +60,7 @@ def get_csv_path() -> str:
     return csv_path or "data/samples/sample-data-2.csv"
 
 
-def read_songs_from_csv(csv_path: str) -> List[Dict[str, str]]:
+def read_songs_from_csv(csv_path: str) -> list[dict[str, str]]:
     """
     Reads songs from a CSV file and returns a list of song dictionaries.
 
@@ -88,7 +88,7 @@ def read_songs_from_csv(csv_path: str) -> List[Dict[str, str]]:
     return songs
 
 
-def detect_language(text: str) -> Optional[str]:
+def detect_language(text: str) -> str | None:  # defaults to English
     """Detects the language of the given text.
 
     Args:
@@ -126,7 +126,7 @@ def is_match(requested: str, actual: str, threshold=60) -> bool:
     return ratio >= threshold
 
 
-def search_song(title: str, artist: str) -> Optional[Dict[str, str]]:
+def search_song(title: str, artist: str) -> list[dict[str, str]]:
     """Searches for a song on Genius by title and artist.
 
     Args:
@@ -187,7 +187,7 @@ def translate_lyrics(lyrics: str, src_language: str) -> str:
 
 
 def generate_pdf(
-    songs_data: List[Dict[str, str]], pdf_name: str = "lyrics.pdf"
+    songs_data: list[dict[str, str]], pdf_name: str = "lyrics.pdf"
 ) -> None:
     """Generates a PDF file with the song lyrics.
 
@@ -245,8 +245,10 @@ def generate_pdf(
                 try:
                     pdf.add_font("ArialUnicode", "I", arialttf_path, uni=True)
                 except Exception:
+                    print(
+                        f"Failed to add italic font variant for {arialttf_path}. Some font files don't include an italic variant; ignoring this error."
+                    )
                     # some font files don't include an italic variant; ignore
-                    pass
             pdf.set_font(font_family, "B", size=14)
             pdf.cell(0, 10, f"{title} by {artist} (translated)", ln=True)
             pdf.set_font(font_family, size=12)

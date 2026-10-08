@@ -17,6 +17,18 @@ AI-powered tool to read song titles from a setlist and generate a pdf of lyrics,
 >
 > Lyrics4Setlist automates this process, outputting requested lyrics, with translations, in one clean PDF.
 
+## Logic Flow
+
+A user-uploaded image is sent to Tesseract OCR on the frontend to scrape the text, which populates an editable list of song titles and artists on the client.
+
+When the user clicks the "Generate PDF" button, the list of songs is sent to the backend. 
+
+For each song, the backend queries the genius lyrics api for the lyrics (leveraging fuzzy matching in case of spelling errors or slight title mismatches) and runs the lyrics through Python's langdetect library. If the lyrics are non-English, it translates them using googletrans. Lyrics and translations are then added to a dictionary.
+
+A PDF is then initialized, and, proceeding in order, the lyrics and translated lyrics are appended to the PDF using FPDF2.
+
+This PDF is then sent back to the client to be downloaded by the user.
+
 ## Setup
 
 Generate an access token for free at [genius.com/api-clients](https://genius.com/api-clients) and store it as an environment variable (see `.env.example`).
@@ -71,7 +83,7 @@ curl -X POST http://localhost:8000/generate-pdf \
   -H "Content-Type: application/json" \
   -d '{
     "songs": [
-      {"title": "Shape of You", "artist": "Ed Sheeran"}
+      {"title": "Hello", "artist": "Adele"}
     ]
   }' \
   --output lyrics.pdf
