@@ -1,7 +1,6 @@
 import asyncio
 import csv
 import os
-from typing import Dict, List, Optional
 
 import lyricsgenius
 import requests
